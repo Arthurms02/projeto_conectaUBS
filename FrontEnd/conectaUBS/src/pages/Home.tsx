@@ -1,6 +1,5 @@
 import React from "react";
 
-// Definimos o componente usando o tipo React.FC (Function Component)
 const Home: React.FC = () => {
   return (
     <div
@@ -12,7 +11,7 @@ const Home: React.FC = () => {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      <h1>Olá, Mundo! 👋</h1>
+      <h1>Entrega de Guilherme</h1>
     </div>
   );
 };
