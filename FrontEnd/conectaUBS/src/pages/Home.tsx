@@ -1,17 +1,9 @@
-import React from "react";
 
-const Home: React.FC = () => {
+const Home = () => {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <h1>Entrega de Guilherme</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-500 to-blue-100 p-4">
+      <h1 className="text-2xl font-bold mb-4">Entrega de Guilherme</h1>
+      <h2 className="text-xl font-semibold mb-4">Bem-vindo à nossa aplicação!</h2>
     </div>
   );
 };

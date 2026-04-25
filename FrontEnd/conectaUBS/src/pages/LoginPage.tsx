@@ -1,6 +1,11 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../lib/context/AuthContext';
+import { useForm } from "react-hook-form";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import type { LoginFormInputs } from '../types/types';
+
+
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Label } from '../components/Label';
@@ -8,33 +13,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { LogIn, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '../components/Alert';
 
+
+const schema = yup.object().shape({
+  username: yup.string().email('Email inválido').required('Email é obrigatório'),
+  password: yup.string().min(6, 'A senha deve conter no mínimo 6 caracteres').required('Senha é obrigatória'),
+});
+
 export function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
+    resolver: yupResolver(schema)
+  });
 
+  const onSubmit = async (data: LoginFormInputs) => {
     try {
-      const success = await login(email, password);
-
-      if (success) {
-        navigate('/admin');
-      } else {
-        setError('Email ou senha incorretos');
-      }
-    } catch (err) {
-      setError('Erro ao fazer login. Tente novamente.');
-    } finally {
-      setIsLoading(false);
+      await login(data.username, data.password);
+      navigate('/registro');
+    } catch (error) {
+      alert('Erro ao fazer login. Verifique suas credenciais e tente novamente.');
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
@@ -51,11 +53,11 @@ export function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {errors && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription>{errors.username?.message || errors.password?.message}</AlertDescription>
               </Alert>
             )}
 
@@ -65,10 +67,8 @@ export function LoginPage() {
                 id="email"
                 type="email"
                 placeholder="admin@conectaubs.gov.br"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                {...register('username')}
                 required
-                disabled={isLoading}
               />
             </div>
 
@@ -78,15 +78,13 @@ export function LoginPage() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                {...register('password')}
                 required
-                disabled={isLoading}
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Entrando...' : 'Entrar'}
+            <Button type="submit" className="w-full" >
+              Entrar
             </Button>
 
             <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">

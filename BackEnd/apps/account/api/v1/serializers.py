@@ -2,12 +2,13 @@ from rest_framework import serializers
 from apps.account.models import Usuario
 
 
-class RegisterSerializer(serializers.ModelSerializer):
-    confirmacao_senha = serializers.CharField(write_only=True)
+class UsuarioSerializer(serializers.ModelSerializer):
+
+    senha = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
         model = Usuario
-        fields = ['id', 'nome', 'email', 'telefone', 'cpf', 'senha', 'confirmacao_senha']
+        fields = ['id', 'nome', 'email', 'telefone', 'cpf']
         extra_kwargs = {
             'senha': {'write_only': True},
         }

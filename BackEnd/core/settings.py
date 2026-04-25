@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+
+from django import core
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,6 +21,7 @@ DEBUG = os.getenv('DJANGO_DEBUG') == 'True'
 
 ALLOWED_HOSTS = []
 
+DJANGO_SETTINGS_MODULE=os.getenv('DJANGO_SETTINGS_MODULE', 'settings')
 
 # Application definition
 
@@ -104,10 +107,13 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'account.Usuario'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "core.authentication.CookieJWTAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 3,
 }
 
 
@@ -132,6 +138,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Permitir envio de cookies e credenciais (para httpOnly cookies ou JWT)
+CORS_ALLOW_CREDENTIALS = True
+
+# True em produção com HTTPS
+SECURE_COOKIE = False
 
 LEAFLET_CONFIG = {
     'DEFAULT_CENTER': (-7.0266, -37.2747),

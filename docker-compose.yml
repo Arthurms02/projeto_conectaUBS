@@ -25,6 +25,8 @@ services:
       - db # Garante que o banco suba antes do backend
     env_file:
       - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings
 
   frontend:
     build:

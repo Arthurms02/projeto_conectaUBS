@@ -27,7 +27,7 @@ export function LoginUserPage() {
       // Validação básica
       if (email && password) {
         // Aqui você faria a autenticação real
-        navigate('/');
+        navigate('/registro');
       } else {
         setError('Email ou senha incorretos');
       }
