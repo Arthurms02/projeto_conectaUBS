@@ -1,89 +1,49 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useForm } from 'react-hook-form';
+import { useAuth } from '../../lib/context/AuthContext';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import type { RegisterFormInputs } from '../../lib/types/types';
+
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Label } from '../Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
-import { Heart, Mail, Lock, User, Phone, AlertCircle, Eye, EyeOff, MapPin } from 'lucide-react';
+import { Heart, Mail, Lock, User, Phone, AlertCircle, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '../Alert';
-import { Checkbox } from '../Checkbox';
 
 export function RegisterPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    cpf: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptTerms, setAcceptTerms] = useState(false);
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { registerUser } = useAuth();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const {register, handleSubmit, formState: { errors }} = useForm<RegisterFormInputs>({
+    resolver: yupResolver(
+      yup.object().shape({
+        nome: yup.string().required('O nome é obrigatório'),
+        email: yup.string().email('Email inválido').required('O email é obrigatório'),
+        telefone: yup.string().optional(),
+        cpf: yup.string().matches(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF inválido').required('O CPF é obrigatório'),
+        password: yup.string().min(6, 'A senha deve ter no mínimo 6 caracteres').required('A senha é obrigatória'),
+        confirmPassword: yup.string().oneOf([yup.ref('password'), undefined], 'As senhas não coincidem').required('Confirmar senha é obrigatório'),
+        role: yup.mixed<'agente_saude' | 'agente_endemias'>().oneOf(['agente_saude', 'agente_endemias']).required('O cargo é obrigatório')
+      })
+    )
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-
-    // Validações
-    if (formData.password !== formData.confirmPassword) {
-      setError('As senhas não coincidem');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('A senha deve ter no mínimo 6 caracteres');
-      return;
-    }
-
-    if (!acceptTerms) {
-      setError('Você deve aceitar os termos de uso e política de privacidade');
-      return;
-    }
-
-    setIsLoading(true);
-
+  const onSubmit = async (data: RegisterFormInputs) => {
     try {
-      // Simula uma chamada à API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Aqui você faria o registro real
-      console.log('Dados de registro:', formData);
-
-      // Redireciona para login após sucesso
-      navigate('/login-usuario', { state: { message: 'Conta criada com sucesso! Faça login para continuar.' } });
-    } catch (err) {
-      setError('Erro ao criar conta. Tente novamente.');
-    } finally {
-      setIsLoading(false);
+      await registerUser({
+        nome: data.nome,
+        email: data.email,
+        telefone: data.telefone,
+        cpf: data.cpf,
+        password: data.password,
+        role: data.role
+      });
+      navigate('/login-usuario');
+    } catch (error: any) {
+      alert(error.response?.data?.detail || 'Erro ao criar conta. Tente novamente.');
     }
-  };
-
-  const formatCPF = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1');
-  };
-
-  const formatPhone = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d)/, '$1-$2')
-      .replace(/(-\d{4})\d+?$/, '$1');
   };
 
   return (
@@ -119,11 +79,11 @@ export function RegisterPage() {
             </CardHeader>
 
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                {errors.message && (
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
+                    <AlertDescription>{errors.message}</AlertDescription>
                   </Alert>
                 )}
 
@@ -138,11 +98,9 @@ export function RegisterPage() {
                         name="name"
                         type="text"
                         placeholder="João da Silva"
-                        value={formData.name}
-                        onChange={handleChange}
+                        {...register('nome')}
                         className="pl-10"
                         required
-                        disabled={isLoading}
                       />
                     </div>
                   </div>
@@ -157,11 +115,9 @@ export function RegisterPage() {
                         name="email"
                         type="email"
                         placeholder="seu@email.com"
-                        value={formData.email}
-                        onChange={handleChange}
+                        {...register('email')}
                         className="pl-10"
                         required
-                        disabled={isLoading}
                       />
                     </div>
                   </div>
@@ -176,14 +132,9 @@ export function RegisterPage() {
                         name="phone"
                         type="tel"
                         placeholder="(83) 99999-9999"
-                        value={formData.phone}
-                        onChange={(e) => {
-                          e.target.value = formatPhone(e.target.value);
-                          handleChange(e);
-                        }}
+                        {...register('telefone')}
                         className="pl-10"
                         required
-                        disabled={isLoading}
                         maxLength={15}
                       />
                     </div>
@@ -199,14 +150,9 @@ export function RegisterPage() {
                         name="cpf"
                         type="text"
                         placeholder="000.000.000-00"
-                        value={formData.cpf}
-                        onChange={(e) => {
-                          e.target.value = formatCPF(e.target.value);
-                          handleChange(e);
-                        }}
+                        {...register('cpf')}
                         className="pl-10"
                         required
-                        disabled={isLoading}
                         maxLength={14}
                       />
                     </div>
@@ -220,26 +166,13 @@ export function RegisterPage() {
                       <Input
                         id="password"
                         name="password"
-                        type={showPassword ? 'text' : 'password'}
+                        type='password'
                         placeholder="••••••••"
-                        value={formData.password}
-                        onChange={handleChange}
+                        {...register('password')}
                         className="pl-10 pr-10"
                         required
-                        disabled={isLoading}
                         minLength={6}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="w-5 h-5" />
-                        ) : (
-                          <Eye className="w-5 h-5" />
-                        )}
-                      </button>
                     </div>
                     <p className="text-xs text-gray-500">Mínimo de 6 caracteres</p>
                   </div>
@@ -252,59 +185,31 @@ export function RegisterPage() {
                       <Input
                         id="confirmPassword"
                         name="confirmPassword"
-                        type={showConfirmPassword ? 'text' : 'password'}
+                        type='password'
                         placeholder="••••••••"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
+                        {...register('confirmPassword')}
                         className="pl-10 pr-10"
                         required
-                        disabled={isLoading}
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff className="w-5 h-5" />
-                        ) : (
-                          <Eye className="w-5 h-5" />
-                        )}
-                      </button>
                     </div>
                   </div>
                 </div>
 
+                <label htmlFor="role" className="block mb-2.5 text-sm font-medium text-heading">Selecione seu cargo</label>
+                <select id="role" {...register('role')} className="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body">
+                  <option value="agente_saude">Agente de Saúde</option>
+                  <option value="agente_endemias">Agente de Endemias</option>
+                </select>
+
                 {/* Termos e Condições */}
-                <div className="flex items-start space-x-2 pt-2">
-                  <Checkbox
-                    id="terms"
-                    checked={acceptTerms}
-                    onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-                    disabled={isLoading}
-                  />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Eu aceito os{' '}
-                    <a href="#" className="text-blue-600 hover:underline">
-                      Termos de Uso
-                    </a>
-                    {' '}e a{' '}
-                    <a href="#" className="text-blue-600 hover:underline">
-                      Política de Privacidade
-                    </a>
-                  </label>
-                </div>
 
                 <Button
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700"
-                  disabled={isLoading || !acceptTerms}
                 >
-                  {isLoading ? 'Criando conta...' : 'Criar conta'}
+                  Criar conta
                 </Button>
+
 
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">

@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager
 
-from apps.account.constaint import Role
-
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):

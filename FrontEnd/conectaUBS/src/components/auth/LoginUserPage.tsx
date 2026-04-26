@@ -1,5 +1,10 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useAuth } from '../../lib/context/AuthContext';
+import type {LoginFormInputs} from '../../lib/types/types';
+
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Label } from '../Label';
@@ -7,34 +12,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Ca
 import { Heart, Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { Alert, AlertDescription } from '../Alert';
 
+const schema = yup.object().shape({
+  email: yup.string().email('Email inválido').required('O email é obrigatório'),
+  password: yup.string().required('A senha é obrigatória')
+});
+
 export function LoginUserPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+  const { register, handleSubmit, formState: { errors }} = useForm<LoginFormInputs>({
+    resolver: yupResolver(schema)
+  });
 
+  const onSubmit = async (data: LoginFormInputs) => {
     try {
-      // Simula uma chamada à API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Validação básica
-      if (email && password) {
-        // Aqui você faria a autenticação real
-        navigate('/registro');
-      } else {
-        setError('Email ou senha incorretos');
-      }
-    } catch (err) {
-      setError('Erro ao fazer login. Tente novamente.');
-    } finally {
-      setIsLoading(false);
+      await login(data.email, data.password);
+      navigate('/');
+    } catch (error: any) {
+      console.error('Erro ao fazer login:', error);
     }
   };
 
@@ -71,11 +67,11 @@ export function LoginUserPage() {
             </CardHeader>
 
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                {errors.email && (
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
+                    <AlertDescription>{errors.email.message}</AlertDescription>
                   </Alert>
                 )}
 
@@ -87,11 +83,9 @@ export function LoginUserPage() {
                       id="email"
                       type="email"
                       placeholder="seu@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      {...register('email')}
                       className="pl-10"
                       required
-                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -99,42 +93,25 @@ export function LoginUserPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Senha</Label>
-                    <Link to="/esqueci-senha" className="text-xs text-blue-600 hover:text-blue-700 hover:underline">
-                      Esqueceu a senha?
-                    </Link>
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
                       id="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type="password"
                       placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...register('password')}
                       className="pl-10 pr-10"
                       required
-                      disabled={isLoading}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
                   </div>
                 </div>
 
                 <Button
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700"
-                  disabled={isLoading}
                 >
-                  {isLoading ? 'Entrando...' : 'Entrar'}
+                  Entrar
                 </Button>
 
                 <div className="relative my-6">

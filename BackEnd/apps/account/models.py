@@ -32,7 +32,7 @@ class BaseModel(models.Model):
 
 class Usuario(AbstractBaseUser, PermissionsMixin, BaseModel):
 
-    role = models.CharField(max_length=20, choices=Role.choices, null=True, blank=True)
+    role = models.CharField(max_length=20, choices=Role.choices)
     nome = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     telefone = models.CharField(max_length=20, blank=True, null=True)
@@ -40,7 +40,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin, BaseModel):
 
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nome', 'cpf', 'role']
+    REQUIRED_FIELDS = ['nome', 'cpf']
 
     objects = UsuarioManager()
     all_objects = ActiveManager()
@@ -48,6 +48,15 @@ class Usuario(AbstractBaseUser, PermissionsMixin, BaseModel):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.is_superuser:
+            self.role = Role.ADMIN
+            if Usuario.objects.filter(role=Role.ADMIN).exclude(id=self.id).exists():
+                raise ValueError("Já existe um usuário com o papel de Admin.")
+        elif self.role == Role.ADMIN:
+            raise PermissionError("Não é permitido atribuir o papel de Admin diretamente.")
+        super().save(*args, **kwargs)
 
     # def has_perm(self, perm, obj=None):
     #     if self.role == Role.SUPER_ADMIN:

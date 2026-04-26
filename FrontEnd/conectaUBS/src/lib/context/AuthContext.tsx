@@ -1,6 +1,7 @@
 import {createContext, useContext , useState, useEffect} from 'react';
 import api from '../../services/api';
 import type { AuthContextType } from '../types/AuthContextType';
+import type { Usuario } from '../types/types';
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -11,6 +12,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await api.post("/api/token/", { email, password });
     setIsAuthenticated(true);
   };
+
+  const registerUser = async (usuario: Omit<Usuario, 'id'>) => {
+    await api.post("/api/v1/usuarios/", usuario);
+    setIsAuthenticated(true);
+    window.location.href = "/login";
+  }
 
   const logout = () => {
     setIsAuthenticated(false);
@@ -39,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, registerUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
