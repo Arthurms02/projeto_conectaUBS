@@ -9,7 +9,7 @@ import { Button } from '../Button';
 import { Input } from '../Input';
 import { Label } from '../Label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
-import { Heart, Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Heart, Mail, Lock, AlertCircle, } from 'lucide-react';
 import { Alert, AlertDescription } from '../Alert';
 
 const schema = yup.object().shape({
