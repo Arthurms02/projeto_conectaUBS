@@ -1,0 +1,44 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data # Salva os dados para não perder se o container cair
+
+  backend:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./BackEnd:/app
+    depends_on:
+      - db # Garante que o banco suba antes do backend
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=core.settings
+
+  frontend:
+    build:
+      context: ./FrontEnd/conectaUBS
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./FrontEnd/conectaUBS:/app
+      - /app/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
+
+volumes:
+  postgis_data: # Declaração do volume persistente do banco de dados
