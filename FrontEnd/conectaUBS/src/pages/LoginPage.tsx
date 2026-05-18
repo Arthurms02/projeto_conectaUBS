@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router';
-import { useAuth } from '../lib/context/AuthContext';
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,20 +20,14 @@ const schema = yup.object().shape({
 
 export function LoginPage() {
 
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
     resolver: yupResolver(schema)
   });
 
-  const onSubmit = async (data: LoginFormInputs) => {
-    try {
-      await login(data.username, data.password);
-      navigate('/registro');
-    } catch (error) {
-      alert('Erro ao fazer login. Verifique suas credenciais e tente novamente.');
-    }
+  const onSubmit = async () => {
+    navigate('/admin');
   };
 
 

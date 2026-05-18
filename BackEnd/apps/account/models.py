@@ -7,6 +7,8 @@ from apps.account.manage import ActiveManager, UsuarioManager
 from apps.account.constaint import Role
 from django.contrib.auth.models import PermissionsMixin
 
+from django.contrib.gis.db import models
+
 
 class BaseModel(models.Model):
 
@@ -58,19 +60,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin, BaseModel):
             raise PermissionError("Não é permitido atribuir o papel de Admin diretamente.")
         super().save(*args, **kwargs)
 
-    # def has_perm(self, perm, obj=None):
-    #     if self.role == Role.SUPER_ADMIN:
-    #         return True
-    #     # Por padrão, se não for super_admin, não tem permissão extra
-    #     # (a menos que você configure Grupos depois)
-    #     return False
-
-    # def has_module_perms(self, app_label):
-    # # Se for super_admin, ele pode ver TODOS os apps (módulos)
-    #     if self.role ==Role.SUPER_ADMIN:
-    #         return True
-    #     return False
-
     def __str__(self):
         return self.email
 
@@ -102,3 +91,16 @@ class PerfilAgente(BaseModel):
 
     def __str__(self):
         return self.coren
+
+
+# Teste GeoDjango
+
+
+class Loja(models.Model):
+    nome = models.CharField(max_length=100)
+    # geography=True: diz ao PostGIS para calcular distâncias na esfera terrestre (metros)
+    # spatial_index=True: Cria o índice GIST automaticamente no banco
+    localizacao = models.PointField(geography=True, spatial_index=True)
+
+    def __str__(self):
+        return self.nome

@@ -5,6 +5,7 @@ import type { Usuario } from '../types/types';
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 

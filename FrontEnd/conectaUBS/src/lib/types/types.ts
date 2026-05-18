@@ -30,3 +30,23 @@ export type RegisterFormInputs = {
   confirmPassword: string;
   role: 'AGENTE_SAUDE' | 'AGENTE_ENDEMIAS';
 };
+
+
+export type UBS = {
+  id: number;
+  name: string;
+  address: string;
+  neighborhood: string;
+  city: string;
+  phone: string;
+  distance?: string;
+  distanceKm?: number;
+  status: 'aberto' | 'fechado' | 'parcial';
+  openHours: string;
+  specialties: string[];
+  rating: number;
+  totalRatings: number;
+  lat?: number;
+  lng?: number;
+}
+

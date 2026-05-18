@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from apps.account.constaint import Role
-from apps.account.models import Usuario
+from apps.account.models import Usuario, Loja
 
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 class UsuarioSerializer(serializers.ModelSerializer):
 
@@ -23,3 +24,12 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return user
 
 
+# Teste GeoDjango
+
+
+
+class LojaGeoSerializer(GeoFeatureModelSerializer):
+    class Meta:
+        model = Loja
+        geo_field = "localizacao"  # Define qual campo contém a geometria
+        fields = ['id', 'nome']    # Os outros campos irão para o bloco "properties" do GeoJSON

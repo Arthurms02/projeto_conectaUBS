@@ -3,7 +3,9 @@ import { createBrowserRouter } from 'react-router';
 import { LoginPage } from '../pages/LoginPage';
 import { LoginUserPage } from '../components/auth/LoginUserPage';
 import { RegisterPage } from '../components/auth/RegisterPage';
-import Home from '../pages/Home';
+import { HomePage } from '../pages/HomePage';
+import { UBSProfilePage } from '../pages/UBSProfilePage';
+import { AdminPage } from '../pages/AdminPainelPage';
 
 
 export const router = createBrowserRouter([
@@ -13,7 +15,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <Home />,
+    element: <HomePage />,
   },
   {
     path: '/login-usuario',
@@ -23,4 +25,12 @@ export const router = createBrowserRouter([
     path: '/registro',
     element: <RegisterPage />,
   },
+  {
+    path: '/ubs/:id',
+    element: <UBSProfilePage />,
+  },
+  {
+    path: '/admin',
+    element: <AdminPage />,
+  }
 ]);
