@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import {
   MapPin,
@@ -13,7 +13,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-export function UBSProfilePage() {
+export default function UBSProfilePage() {
   const services = [
     { name: 'Vacinação', icon: '💉' },
     { name: 'Dentista', icon: '🦷' },

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../lib/context/AuthContext';
 import * as yup from 'yup';
@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Ca
 import { Heart, Mail, Lock, User, Phone, AlertCircle, MapPin } from 'lucide-react';
 import { Alert, AlertDescription } from '../Alert';
 
-export function RegisterPage() {
+export default function RegisterPage() {
   const navigate = useNavigate();
   const { registerUser } = useAuth();
 

@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import {
   MapPin, Phone, Mail, Heart, Shield, Search, User,
   Star, Clock, ChevronRight, Loader2, AlertCircle,
   Activity, Building2, Users, Stethoscope, X,
-  Baby, Smile, GraduationCap, Megaphone, Pill
+  Baby, Smile, Pill
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import type { UBS } from '../lib/types/types';
+import ChatBot  from '../components/ChatBot';
 // import { api } from '../services/api';
 
 const STATS = [
@@ -19,19 +20,19 @@ const STATS = [
 ];
 
 
-const CATEGORY_ICONS: Record<string, React.ElementType> = {
-  alerta: Megaphone,
-  saude: Stethoscope,
-  educacao: GraduationCap,
-  vacinacao: Pill,
-};
+// const CATEGORY_ICONS: Record<string, React.ElementType> = {
+//   alerta: Megaphone,
+//   saude: Stethoscope,
+//   educacao: GraduationCap,
+//   vacinacao: Pill,
+// };
 
-const CATEGORY_COLORS: Record<string, string> = {
-  alerta: 'bg-amber-100 text-amber-700',
-  saude: 'bg-blue-100 text-blue-700',
-  educacao: 'bg-green-100 text-green-700',
-  vacinacao: 'bg-purple-100 text-purple-700',
-};
+// const CATEGORY_COLORS: Record<string, string> = {
+//   alerta: 'bg-amber-100 text-amber-700',
+//   saude: 'bg-blue-100 text-blue-700',
+//   educacao: 'bg-green-100 text-green-700',
+//   vacinacao: 'bg-purple-100 text-purple-700',
+// };
 
 function StatusBadge({ status }: { status: UBS['status'] }) {
   const map = {
@@ -89,7 +90,7 @@ function UBSCardSkeleton() {
 //   );
 // }
 
-export function HomePage() {
+export default function HomePage() {
 
   const [inputValue, setInputValue] = useState('');
   const [isSearchMode, setIsSearchMode] = useState(false);
@@ -155,6 +156,7 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <ChatBot />
       {/* ── Header ── */}
       <header className="bg-white/70 backdrop-blur-md border-b border-white/40 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">

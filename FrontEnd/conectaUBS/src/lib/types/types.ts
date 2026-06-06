@@ -10,7 +10,7 @@ export type Usuario = {
 
 // Tipo para autenticação
 export type AuthContextType = {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   login: (email: string, password: string) => Promise<void>;
   registerUser: (usuario: Omit<Usuario, 'id'>) => Promise<void>;
   logout: () => void;

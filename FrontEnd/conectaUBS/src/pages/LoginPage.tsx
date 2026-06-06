@@ -1,8 +1,8 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import type { LoginFormInputs } from '../types/types';
+import type { LoginFormInputs } from '../lib/types/types';
 
 
 import { Button } from '../components/Button';
@@ -18,7 +18,7 @@ const schema = yup.object().shape({
   password: yup.string().min(6, 'A senha deve conter no mínimo 6 caracteres').required('Senha é obrigatória'),
 });
 
-export function LoginPage() {
+export default function LoginPage() {
 
   const navigate = useNavigate();
 

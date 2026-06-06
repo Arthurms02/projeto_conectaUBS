@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -39,7 +39,7 @@ const mockStats = [
   { label: 'Taxa de Resolução', value: '92%', icon: Activity, color: 'text-purple-600' },
 ];
 
-export function AdminPage() {
+export default function AdminPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 

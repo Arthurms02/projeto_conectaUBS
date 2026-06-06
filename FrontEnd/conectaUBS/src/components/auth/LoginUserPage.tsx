@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -17,7 +17,7 @@ const schema = yup.object().shape({
   password: yup.string().required('A senha é obrigatória')
 });
 
-export function LoginUserPage() {
+export default function LoginUserPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
