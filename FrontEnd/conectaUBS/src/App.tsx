@@ -1,6 +1,7 @@
 import { AuthProvider, useAuth } from './lib/context/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
-import { AppRoutes } from './routes/routes';
+import { AppRoutes } from './routes/routes'
+
 
 
 function AppComponent() {
@@ -21,6 +22,7 @@ export default function App() {
   return (
     <AuthProvider>
         <AppComponent />
+
     </AuthProvider>
   );
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const api = axios.create({
   baseURL: baseURL,
@@ -46,7 +46,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // Refresh inválido → força logout
         clearTokens();
-        window.location.href = '/login';
+        window.location.href = '/login-admin';
         return Promise.reject(refreshError);
       }
     }

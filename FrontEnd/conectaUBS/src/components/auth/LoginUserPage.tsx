@@ -30,7 +30,7 @@ export default function LoginUserPage() {
       await login(data.email, data.password);
       navigate('/');
     } catch (error: any) {
-      console.error('Erro ao fazer login:', error);
+      alert(error);
     }
   };
 
@@ -135,7 +135,7 @@ export default function LoginUserPage() {
                 <div className="pt-4 border-t border-gray-200">
                   <p className="text-xs text-center text-gray-500">
                     Acesso administrativo?{' '}
-                    <Link to="/login" className="text-blue-600 hover:text-blue-700 hover:underline">
+                    <Link to="/login-admin" className="text-blue-600 hover:text-blue-700 hover:underline">
                       Clique aqui
                     </Link>
                   </p>

@@ -7,7 +7,6 @@ from django.contrib.gis.measure import D
 from apps.account.models import Loja
 
 
-
 User = get_user_model()
 
 class UsuarioViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -50,3 +49,11 @@ class LojaGeoViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
         return queryset
+
+
+class CurrentUserViewSet(viewsets.GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        serializer = UsuarioSerializer(request.user, context={"request": request})
+        return Response({"user": serializer.data})

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/context/AuthContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -40,11 +40,11 @@ const mockStats = [
 ];
 
 export default function AdminPage() {
-  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleLogout = () => {
-    navigate('/login');
+    logout();
   };
 
   const mockUser = { name: 'Administrador', email: 'admin@email.com' };

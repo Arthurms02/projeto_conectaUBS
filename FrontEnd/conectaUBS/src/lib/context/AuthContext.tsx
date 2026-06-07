@@ -1,5 +1,5 @@
 import {createContext, useContext , useState, useEffect} from 'react';
-import api from '../../services/api';
+import api from '../../api/axios';
 import type { AuthContextType } from '../types/types';
 import type { Usuario } from '../types/types';
 
@@ -17,24 +17,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const registerUser = async (usuario: Omit<Usuario, 'id'>) => {
     await api.post("/api/v1/usuarios/", usuario);
     setIsAuthenticated(true);
-    window.location.href = "/login";
+    window.location.href = "/login-usuario";
   }
 
   const logout = () => {
-    setIsAuthenticated(false);
-    window.location.href = "/login";
+    void api.post("/api/token/logout/").finally(() => {
+      setIsAuthenticated(false);
+      window.location.href = "/login-usuario";
+    });
   };
 
   useEffect(() => {
     const validateSession = async () => {
       try {
-        await api.get("/api/v1/");
+        await api.get("/api/v1/me/");
         setIsAuthenticated(true);
       } catch (error: any) {
         setIsAuthenticated(false);
         // Redireciona uma única vez, evita múltiplas redireções
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
+        if (window.location.pathname !== "/login" && window.location.pathname !== "/login-usuario") {
+          window.location.href = "/login-usuario";
         }
       }
     };
@@ -43,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div>Verificando sessão...</div>;
+    return <div> Verificando sessão...</div>;
   }
 
   return (

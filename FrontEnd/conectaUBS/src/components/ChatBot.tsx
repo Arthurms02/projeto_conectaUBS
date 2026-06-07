@@ -6,11 +6,11 @@ export default function ChatBot() {
   useEffect(() => {
     // Inicializa o widget do n8n chat
     const chatInstance = createChat({
-      webhookUrl: 'https://arthurms02.app.n8n.cloud/webhook/3822a421-8e5b-496c-9780-96e174f58cfe/chat', // Subsitua pela URL de Produção do n8n
+      webhookUrl: 'https://arthurms02.app.n8n.cloud/webhook/3822a421-8e5b-496c-9780-96e174f58cfe/chat', 
       mode: 'window', // Pode ser 'window' (balão flutuante) ou 'fullscreen'
       showWelcomeScreen: true,
       chatInputKey: 'chatInput',
-      title: 'Assistente Virtual',
+      title: 'Agente Ze Curativo',
       subtitle: 'Estou aqui para ajudar com seus projetos e dúvidas.',
       initialMessages: [
         'Olá! Seja bem-vindo.',
@@ -18,7 +18,7 @@ export default function ChatBot() {
       ],
       i18n: {
         en: {
-          title: 'Assistente',
+          title: 'Ze Curativo',
           subtitle: 'Online',
           inputPlaceholder: 'Digite sua mensagem aqui...',
           welcomeMessages: ['Olá! Como posso ajudar?', 'Pergunte-me algo.'],

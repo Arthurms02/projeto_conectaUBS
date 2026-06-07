@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import type { LoginFormInputs } from '../lib/types/types';
+import { useAuth } from '../lib/context/AuthContext';
 
 
 import { Button } from '../components/Button';
@@ -13,6 +14,7 @@ import { LogIn, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '../components/Alert';
 
 
+
 const schema = yup.object().shape({
   username: yup.string().email('Email inválido').required('Email é obrigatório'),
   password: yup.string().min(6, 'A senha deve conter no mínimo 6 caracteres').required('Senha é obrigatória'),
@@ -21,13 +23,20 @@ const schema = yup.object().shape({
 export default function LoginPage() {
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
     resolver: yupResolver(schema)
   });
 
-  const onSubmit = async () => {
-    navigate('/admin');
+  const onSubmit = async (data: LoginFormInputs) => {
+    try{
+      await login(data.email, data.password);
+      navigate('/admin');
+    }catch(error: any){
+      alert(error);
+    }
+    
   };
 
 
